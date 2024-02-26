@@ -1,0 +1,68 @@
+application:
+  name: "acaro"
+  environment: ${ENVIRONMENT:local}
+  country:
+    code: ${COUNTRY:CO}
+    locale: ${LOCALE:es_co}
+server:
+  port: "${SERVER_PORT:8080}"
+  servlet:
+    context-path: "${SERVLET_CONTEXT_PATH:}"
+  error:
+    include-stacktrace: "ALWAYS"
+    include-message: "ALWAYS"
+spring:
+  application:
+    name: "acaro"
+  sleuth:
+    baggage:
+      remote-fields: "X-Country, X-Lang, X-TraceId"
+      correlation-fields: "X-Country, X-Lang, X-TraceId"
+  datasource:
+    url: "jdbc:postgresql://${FAMILY_POSTGRES_HOST:localhost}:5432/${MS_NAME:acaro_db}"
+    username: "${MS_NAME:root}"
+    password: "${FAMILY_POSTGRES_PASSWORD:root}"
+    driver-class-name: "org.postgresql.Driver"
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 20000
+      minimum-idle: 1
+      idle-timeout: 300000
+      max-lifetime: 300000
+      leak-detection-threshold: 300000
+  jpa:
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    generate-ddl: "true"
+    show-sql: "false"
+    hibernate:
+      ddl-auto: "update"
+    properties:
+      hibernate:
+        format_sql: "true"
+        jdbc:
+          time_zone: "${TIME_ZONE:UTC}"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    loggers:
+      enabled: true
+logging:
+  pattern:
+    level: "%clr(%5p) %clr([TraceId=%X{traceId:-} B3SpanId=%X{spanId:-}]){green}"
+rest-client:
+  shared-security:
+    url: ${SHARED_SECURITY_URL:http://sale-billing.sale-billing.svc}
+  logistic-builder:
+    url: ${LOGISTIC_BUILDER_URL:http://logistic-builder.logistic-builder.svc}
+  logistic-package:
+    url: ${LOGISTIC_PACKAGE_URL:http://logistic-package.logistic-package.svc}
+  logistic-routing:
+    url: ${LOGISTIC_ROUTING_URL:http://logistic-routing.logistic-routing.svc}
+  sale-billing:
+    url: ${SALE_BILLING_URL:http://sale-billing.sale-billing.svc}
+  sale-billing-facturama:
+    url: ${SALE_BILLING_FACTURAMA_URL:http://sale-billing-facturama.sale-billing-facturama.svc}
+  sale-billing-dataico:
+    url: ${SALE_BILLING_DATAICO_URL:http://sale-billing-dataico.sale-billing-dataico.svc}
